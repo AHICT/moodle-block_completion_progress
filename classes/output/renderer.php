@@ -27,6 +27,7 @@ namespace block_completion_progress\output;
 
 use block_completion_progress\completion_progress;
 use block_completion_progress\defaults;
+use block_completion_progress\table\overview;
 use plugin_renderer_base;
 use html_writer;
 
@@ -48,5 +49,17 @@ class renderer extends plugin_renderer_base {
             'block_completion_progress/completion_progress',
             $progress->export_for_template($this)
         );
+    }
+
+    /**
+     * Render the overview table.
+     * @param block_completion_progress\table\overview $table
+     * @return string
+     */
+    public function render_overview(overview $table): string {
+        ob_start();
+        $table->out($table->get_default_per_page(), true);
+        echo $table->download_buttons();
+        return ob_get_clean();
     }
 }

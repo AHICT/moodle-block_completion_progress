@@ -158,27 +158,27 @@
     width: 1.2em;
 }
 
-#page-blocks-completion_progress-overview .overviewTable {
+#page-blocks-completion_progress-overview #overview {
     table-layout: fixed;
 }
-#page-blocks-completion_progress-overview .overviewTable th.col-select .form-check {
+#page-blocks-completion_progress-overview #overview th.col-select .form-check {
     padding-left: 0;
 }
-#page-blocks-completion_progress-overview .overviewTable .col-select {
+#page-blocks-completion_progress-overview #overview .col-select {
     width: 2rem;
     text-align: center;
 }
-#page-blocks-completion_progress-overview .overviewTable .col-fullname {
+#page-blocks-completion_progress-overview #overview .col-fullname {
     width: 20%;
 }
-#page-blocks-completion_progress-overview .overviewTable .col-timeaccess {
+#page-blocks-completion_progress-overview #overview .col-timeaccess {
     width: 15%;
 }
-#page-blocks-completion_progress-overview .overviewTable .col-progressbar {
+#page-blocks-completion_progress-overview #overview .col-progressbar {
     min-width: 200px;
     max-width: 40vw;
 }
-#page-blocks-completion_progress-overview .overviewTable .col-progress {
+#page-blocks-completion_progress-overview #overview .col-progress {
     width: 6rem;
     text-align: center;
 }
