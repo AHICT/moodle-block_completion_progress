@@ -298,11 +298,7 @@ echo html_writer::end_tag('form');
 echo $table->download_buttons();
 
 // Organise access to JS for progress bars.
-$PAGE->requires->js_call_amd(
-    'block_completion_progress/progressbar',
-    'init',
-    ['instances' => [$block->id]]
-);
+$PAGE->requires->js_call_amd('block_completion_progress/progressbar', 'init');
 
 echo $output->container_end();
 echo $output->footer();
