@@ -20,8 +20,8 @@
  * @copyright  2020 Jonathon Fowler <fowlerj@usq.edu.au>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/utils'],
-    function($, Utils) {
+define(['jquery', 'core/ajax', 'core/log', 'core/templates', 'core/utils'],
+    function($, Ajax, Log, Templates, Utils) {
         /**
          * Show progress event information for a cell.
          * @param {Event} event
@@ -122,9 +122,15 @@ define(['jquery', 'core/utils'],
 
         /**
          * Place the 'now' marker in the centre of the scrolled bar.
+         * @param {jQuery} barel optional bar element. If not passed, all bars will be positioned.
          */
-        function positionNow() {
-            var barrows = $('.block_completion_progress .barRow');
+        function positionNow(barel) {
+            var barrows;
+            if (typeof barel !== 'undefined') {
+                barrows = barel.find('.barRow');
+            } else {
+                barrows = $('.block_completion_progress .barRow');
+            }
             var nowicons = barrows.find('.nowDiv .icon');
             nowicons.each(function() {
                 var nowicon = $(this);
@@ -135,6 +141,46 @@ define(['jquery', 'core/utils'],
                     barrow.width() / 2);
             });
             barrows.each(checkArrows);
+        }
+
+        /**
+         * Re-render the blocks which have a cell for the given cmid.
+         * @param {String} cmid
+         */
+        function rerenderBlocksWithCmid(cmid) {
+            var blocks = $('.block.block_completion_progress:has(.progressBarCell[data-inforef$="-' + cmid + '"])');
+            blocks.each(function() {
+                let block = $(this);
+                let blockcontent = block.find('div.block_completion_progress');
+                let barcontainer = block.find('.barContainer');
+                let courseid = barcontainer.data('courseid');
+                let instanceid = barcontainer.data('instanceid');
+                let userid = barcontainer.data('userid');
+
+                Log.debug(`block_completion_progress: reloading course ${courseid} blockinstance ${instanceid} user ${userid}`);
+                Ajax.call(
+                    [{
+                        methodname: 'block_completion_progress_get_blockinstance_data',
+                        args: {
+                            courseid,
+                            instanceid,
+                            userid,
+                        },
+                        done: function(response) {
+                            Templates.render('block_completion_progress/completion_progress', response)
+                                .done(function(html, js) {
+                                    let newcontent = Templates.replaceNode(blockcontent, html, js);
+                                    positionNow($(newcontent[0]));
+                                })
+                                .fail(ex => Log.debug('block_completion_progress: error rendering template to reload ' +
+                                    `course ${courseid} blockinstance ${instanceid} user ${userid} -- ${ex.errorcode}`));
+                        },
+                        fail: ex => Log.debug('block_completion_progress: error making ajax call to reload ' +
+                            `course ${courseid} blockinstance ${instanceid} user ${userid} -- ${ex.errorcode}`),
+                    }],
+                    true, true, true
+                );
+            });
         }
 
         /**
@@ -170,6 +216,9 @@ define(['jquery', 'core/utils'],
                 }
             });
             $(() => positionNow());
+
+            // Rerender the block if a student manually completes an activity on the course page.
+            $(document).on('core_course:manualcompletiontoggled', e => rerenderBlocksWithCmid(e.target.dataset.cmid));
         }
 
         return /** @alias module:block_completion_progress/progressbar */ {

@@ -887,10 +887,10 @@ class completion_progress implements \renderable, \templatable {
             ],
         ];
 
+        $data->courseid = $courseid;
         $data->instanceid = $instance;
         $data->userid = $userid;
         $data->simple = $simple;
-        $data->numactivities = $numactivities;
         $data->useicons = $useicons;
 
         if ($simple && $numactivities == 0) {
@@ -989,7 +989,7 @@ class completion_progress implements \renderable, \templatable {
                 }
             }
 
-            $cell->activityicon = $activity->icon;
+            $cell->activityicon = $activity->icon->out(false);
             $cell->activityname = $activity->name;
             if (!empty($activity->link) && (!empty($activity->available) || $simple)) {
                 $cell->activitylink = $activity->link;
