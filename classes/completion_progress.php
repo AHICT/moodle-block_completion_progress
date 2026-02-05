@@ -177,7 +177,7 @@ class completion_progress implements \renderable, \templatable {
      * Specialise for overview page use.
      * @return self
      */
-    public function for_overview() {
+    public function for_overview(): self {
         if ($this->user) {
             throw new coding_exception('cannot re-specialise for overview');
         }

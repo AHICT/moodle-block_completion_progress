@@ -162,7 +162,13 @@ define(['jquery', 'core/utils'],
             $(document).on('theme_boost/drawers:shown theme_boost/drawers:hidden',
                 Utils.debounce(() => $('.block_completion_progress .barRow').each(checkArrows), 250));
 
-            // Handle the 'now' marker on page load.
+            // Handle the 'now' marker on page load and if a dynamic table updates.
+            $(document).on('core_table/dynamic:tableContentRefreshed', function(e) {
+                if (e.target.matches && e.target.matches('.table-dynamic[data-table-handler="overview"]' +
+                        '[data-table-component="block_completion_progress"]')) {
+                    positionNow();
+                }
+            });
             $(() => positionNow());
         }
 
